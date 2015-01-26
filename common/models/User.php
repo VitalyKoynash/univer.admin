@@ -52,9 +52,44 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            [['username', 'password_hash', 'password_reset_token', 'email'], 'required'],
+            //[['username, password_hash, password_reset_token, email'], 'length', 'max'=>128],
+            // The following rule is used by search().
+            // @todo Please remove those attributes that should not be searched.
+            //['id, username, email, role', 'safe', 'on'=>'search'],
+
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => Yii::t('app', 'ID'),
+            'username' => Yii::t('app', 'Username'),
+            'auth_key' => Yii::t('app', 'Auth_key'),
+            'password_hash' => Yii::t('app', 'Password'),
+            'password_reset_token' => Yii::t('app', 'Password_reset_token'),
+            'email' => Yii::t('app', 'Email'),
+            'status' => Yii::t('app', 'Status'),
+            'created_at' => Yii::t('app', 'Created_at'),
+            'updated_at' => Yii::t('app', 'Updated_at'),
+           
+        ];
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->isNewRecord) {
+                $this->auth_key = Yii::$app->getSecurity()->generateRandomString();
+            }
+            return true;
+        }
+        return false;
+    }
     /**
      * @inheritdoc
      */
