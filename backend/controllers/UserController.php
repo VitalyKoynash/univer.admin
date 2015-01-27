@@ -77,6 +77,7 @@ class UserController extends Controller
     public function actionCreate()
     {
         $model = new User();
+        $model->status = User::STATUS_ACTIVE;
         //$model->generateAuthKey();
 
         if ($model->load(Yii::$app->request->post()) && $this->setPasswordHashOnCreate($model) && $model->save()) {
@@ -119,7 +120,7 @@ class UserController extends Controller
         
         if (Yii::$app->user->getId() == $id || $id == 1)
         {
-            Yii::$app->session->setFlash('error', 'You can not remove yourself or first admin!!!');
+            Yii::$app->session->setFlash('error', Yii::t('app', 'You can not remove yourself or first admin!'));
             $this->redirect(['index']);//\Yii::$app->request->getReferrer()
             return;
         }
@@ -150,7 +151,8 @@ class UserController extends Controller
         }
 
         $this->findModel($id)->delete();
-        Yii::$app->session->setFlash('error', 'User has been deleted!');
+
+        Yii::$app->session->setFlash('error', Yii::t('app', 'User has been deleted!'));
         //\Yii::trace($id);
         //\Yii::trace(Yii::$app->user->getId() );
         return $this->redirect(['index']);

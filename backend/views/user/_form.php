@@ -14,9 +14,16 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'username')->textInput() ?>
     <?= $form->field($model, 'password_hash')->textInput() ?>
-    <?= $form->field($model, 'email')->textInput() ?>
+    <?= $form->field($model, 'email')->input('email') ?>
     <?= $form->field($model, 'password_reset_token')->textInput() ?>
-    <!--?= $form->field($model, 'status')->textInput() ?-->
+    <?= $form->field($model, 'status')->dropDownList(
+            $model->getStatusArray('dropDownList'),           // Flat array ('id'=>'label')
+            ['prompt'=>'',
+            'default'=>2,
+            ]    // options
+        );
+
+    ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

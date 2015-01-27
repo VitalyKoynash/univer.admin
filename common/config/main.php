@@ -11,9 +11,10 @@ return [
             'app*' => [
                 'class' => 'yii\i18n\PhpMessageSource',
                 'basePath' => '@app/messages',
+                'sourceLanguage' => 'en',
                 //'sourceLanguage' => 'en-US',
                 'fileMap' => [
-                    'app' => 'user_admin.php',
+                    'app' => 'app.php',
                     //'app/error' => 'error.php',
                 ],
             ],

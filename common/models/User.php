@@ -24,7 +24,10 @@ use yii\web\IdentityInterface;
 class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
+    const STATUS_INACTIVE = 1;
+    const STATUS_BANNED = 2;
     const STATUS_ACTIVE = 10;
+
 
     /**
      * @inheritdoc
@@ -220,4 +223,53 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_reset_token = null;
     }
+
+
+    /**
+    * @return array Массив доступных данных статуса пользователя
+    */
+    public static function getStatusArray($id = null)
+    {
+        $statuses = [
+            self::STATUS_INACTIVE   => [
+                'label' => Yii::t('app', 'Неактивный'),
+                'color' => '',
+                'icon'  => '',
+                'id' => self::STATUS_INACTIVE,
+            ],
+            self::STATUS_ACTIVE   => [
+                'label' => Yii::t('app', 'Активный'),
+                'color' => 'green',
+                'icon'  => '',
+                'id' => self::STATUS_ACTIVE,
+            ],
+            self::STATUS_BANNED   => [
+                'label' => Yii::t('app', 'Заблокирован'),
+                'color' => 'silver',
+                'icon'  => '',
+                'id' => self::STATUS_BANNED,
+            ],
+            self::STATUS_DELETED   => [
+                'label' => Yii::t('app', 'Удален'),
+                'color' => 'gold',
+                'icon'  => '',
+                'id' => self::STATUS_DELETED,
+            ],
+        ];
+        
+        /*
+        if (Yii::$app->getUser()->checkAccess('editUser')) {
+            $statuses[self::STATUS_DELETED] = Yii::t('app', 'Deleted');
+        }*/
+
+        if ($id == 'dropDownList') {
+            return yii\helpers\ArrayHelper::map($statuses, 'id', 'label');
+        }
+        
+        if ($id !== null) {
+            return yii\helpers\ArrayHelper::getValue($statuses, 'label', null);
+        }
+        
+        return $statuses;
+    } 
 }

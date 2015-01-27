@@ -9,6 +9,7 @@ use yii\widgets\Breadcrumbs;
 /* @var $content string */
 
 AppAsset::register($this);
+$this->title = Yii::$app->name; 
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -25,7 +26,7 @@ AppAsset::register($this);
     <div class="wrap">
         <?php
             NavBar::begin([
-                'brandLabel' => 'My Company',
+                'brandLabel' => 'DSEA EDBO admin panel',
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
                     'class' => 'navbar-inverse navbar-fixed-top',

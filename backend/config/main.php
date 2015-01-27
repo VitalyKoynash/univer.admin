@@ -8,6 +8,7 @@ $params = array_merge(
 
 return [
     'id' => 'app-backend',
+    'name' => 'DSEA EDBO admin panel',
     'basePath' => dirname(__DIR__),
     'language' => 'ru-RU', 
     'controllerNamespace' => 'backend\controllers',
@@ -22,7 +23,10 @@ return [
                 ],
                 'route' => null, // disable menu
             */
-        ]
+        ],
+        'EDBOtest' => [
+            'class' => 'app\modules\EDBOtest\Module',
+        ],
     ],
     'components' => [
         'user' => [
