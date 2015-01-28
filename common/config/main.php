@@ -16,10 +16,11 @@ return [
                 'fileMap' => [
                     'app' => 'app.php',
                     //'app/error' => 'error.php',
+                    ],
                 ],
             ],
         ],
+     
     ],
-       
-    ],
+
 ];

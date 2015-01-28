@@ -42,12 +42,17 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
+            [
+                'attribute' => 'id',
+                'format' => 'html',
+                'label' => Yii::t('app', 'Id'),
+                'value' => 'ID',
+                'contentOptions'=>['style'=>'max-width: 10px;']
+            ],
             'username',
             //'auth_key',
             //'password_hash',
-            'password_reset_token',
+            //'password_reset_token',
             'email:email',
             [
                 'attribute' => 'status',

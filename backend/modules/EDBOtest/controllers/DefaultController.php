@@ -8,6 +8,10 @@ class DefaultController extends Controller
 {
     public function actionIndex()
     {
+
+
+    	\Yii::$app->edbo->info();
+
         return $this->render('index');
     }
 }

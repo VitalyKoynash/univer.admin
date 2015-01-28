@@ -22,7 +22,7 @@ return [
     'Create User' => 'Создать пользователя',
     'Auth_key' => 'Ключ авторизации',
     'Password' => 'Пароль',
-    'Password_reset_token' => 'Фраза восстановления пароля',
+    'Password_reset_token' => 'Фраза восст. пароля',
     'Email' => 'Email',
     'Status' => 'Статус',
     'Created_at' => 'Создано',
