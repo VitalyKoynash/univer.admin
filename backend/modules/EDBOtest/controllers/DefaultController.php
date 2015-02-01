@@ -2,6 +2,7 @@
 
 namespace app\modules\EDBOtest\controllers;
 
+use Yii;
 use yii\web\Controller;
 
 class DefaultController extends Controller
@@ -10,7 +11,8 @@ class DefaultController extends Controller
     {
 
 
-    	\Yii::$app->edbo->info();
+    	if (!Yii::$app->edbo->EDBOGuides->status)
+    		return false;
 
         return $this->render('index');
     }
