@@ -44,7 +44,8 @@ $this->title = Yii::$app->name;
                     'linkOptions' => ['data-method' => 'post']];
                     
                 $menuItems[] = [
-                    'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
+                    //'label' => 'Logout (' . Yii::$app->user->identity->username .')',
+                'label' => 'Logout (' . Yii::$app->user->identity->username . ' ['. Yii::$app->user->identity->getEdbouser('email') .']'.')',
                     'url' => ['/site/logout'],
                     'linkOptions' => ['data-method' => 'post']];
             }

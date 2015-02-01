@@ -50,24 +50,7 @@ class EDBOGuides extends Component
     }
         
     
-    /*
-    * Получение информации об ошибке при неудачном вызове всех методов web  сервиса, кроме  Login и Logout.
-    */
-    public function GetLastError($GUIDSession) {
-        $res = $this->soap->invoke ( "GetLastError", array (
-                "GUIDSession" => $GUIDSession));
 
-        if ($res == NULL) {
-            //error getting error
-            $res = $this->soap->invoke ( "GetLastError", array (
-                "SessionGUID" => $SessionGUID));
-            if ($res == NULL) {
-                return "Unknow EDBO error";
-            }
-
-        }
-        return $res;
-    }
 
 
     /*
@@ -84,9 +67,19 @@ class EDBOGuides extends Component
 Ошибочным считается вызов метода,  который возвращает строку  длинной  не равной  36-и
 байтам. 
     */
-    public function Login($User, $Password ) {
-        
-        \Yii::$app->session->set('sessionId','');
+    public function Login($User = NULL, $Password = NULL) {
+        $Password = 'iowv8ermnl';//\Yii::$app->user->identity->getEdbouser('email') 
+        $User = \Yii::$app->user->identity->getEdbouser('email');
+        $GUIDSession = \Yii::$app->user->identity->getGUIDSession();
+
+        if (EDBOSoapHelper::check_guid($GUIDSession))
+        {
+            \Yii::trace(__METHOD__.' guid found = '.$GUIDSession);
+            return $GUIDSession;
+        } 
+
+        \Yii::trace(__METHOD__.' guid not found = '.$GUIDSession);
+        //\Yii::$app->session->set('sessionId','');
         if (!$this->status) return NULL;
 
         $ApplicationKey = Yii::$app->edbo->applicationKey;
@@ -99,9 +92,18 @@ class EDBOGuides extends Component
                 "ApplicationKey"=>$ApplicationKey));
 
         if (!$res['status'])
+        {
+            \Yii::trace(__METHOD__.' failed getting guid = '.$GUIDSession);
             return NULL;
-        \Yii::$app->session->set('sessionId','');
-        return $sessionId;
+        }
+        //\Yii::$app->session->set('sessionId','');
+        \Yii::$app->user->identity->setGUIDSession($res['res']);
+
+        $GUIDSession = \Yii::$app->user->identity->getGUIDSession();
+        
+        \Yii::trace(__METHOD__.' created guid = '.$GUIDSession);
+        
+        return $GUIDSession;
 
 /*
             $languages = $this->soap->invoke("LanguagesGet", array("SessionGUID"=>$this->sessionId));
@@ -116,13 +118,35 @@ class EDBOGuides extends Component
     /*
      * Получения списка доступных языков используемых ЄДЕБО
      */
-    public function LanguagesGet($SessionGUID) {
+    public function LanguagesGet($SessionGUID = NULL) {
+        $SessionGUID = $this->Login();// \Yii::$app->user->identity->getGUIDSession();
          $res = $this->soap->invoke ( "LanguagesGet", array (
                 "SessionGUID" => $SessionGUID));
 
         return $res;
     }
 
+        /*
+    * Получение информации об ошибке при неудачном вызове всех методов web  сервиса, кроме  Login и Logout.
+    */
+    public function GetLastError($GUIDSession = NULL) {
+        if (!$GUIDSession = $this->Login())
+            return NULL;
+
+        $res = $this->soap->invoke ( "GetLastError", array (
+                "GUIDSession" => $GUIDSession));
+
+        if ($res == NULL) {
+            //error getting error
+            $res = $this->soap->invoke ( "GetLastError", array (
+                "SessionGUID" => $GUIDSession));
+            if ($res == NULL) {
+                return "Unknow EDBO error";
+            }
+
+        }
+        return $res;
+    }
 
 
 }

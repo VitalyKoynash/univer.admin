@@ -25,7 +25,7 @@ class EDBOSoapHelper extends Object
                 $this->_soapClient = new \SoapClient ($soap_address, [
                     'encoding'=>'utf-8',
                     "exceptions" => 1,
-                    //'cache_wsdl' => \WSDL_CACHE_MEMORY,
+                    'cache_wsdl' => \WSDL_CACHE_MEMORY,
                     ]);
                 \Yii::endProfile('_soapClient');
                 \Yii::trace("succesfully connect to ".$soap_address);
