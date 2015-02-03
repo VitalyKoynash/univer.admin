@@ -10,11 +10,12 @@
         <code><?= __FILE__ ?></code>
     </p>
     <p><?=Yii::$app->edbo->info();?></p>
-    <blockquote><?php $res=Yii::$app->edbo->EDBOGuides->Login(); print_r($res) ?></blockquote>
+    <!--blockquote><?php $res=Yii::$app->edbo->EDBOGuides->Login(); print_r($res) ?></blockquote>
     <blockquote><?php $res=Yii::$app->edbo->EDBOGuides->LanguagesGet(); print_r($res) ?></blockquote>
-    <blockquote><?php $res=Yii::$app->edbo->EDBOGuides->GetLastError(); print_r($res) ?></blockquote>
-
-
+    <blockquote><?php $res=Yii::$app->edbo->EDBOGuides->GetLastError(); print_r($res) ?></blockquote-->
+    <?php foreach (Yii::$app->edbo->EDBOGuides->test() as $key => $test_item_func): ?>
+        <blockquote> <?php echo $test_item_func(); ?> </blockquote>
+    <?php endforeach; ?>
 
 
 </div>

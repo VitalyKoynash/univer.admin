@@ -17,6 +17,8 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
+    'Sessionguid' => 'EDBO GUID',
+    'Sessionguid_updated_at' => 'Сессия обновлена',
     'You can not remove yourself or first admin!' => 'Вы не можете удалить сами себя и пользователя admin!',
     'User has been deleted!' => 'Пользователь успешно удален!',
     'Create User' => 'Создать пользователя',

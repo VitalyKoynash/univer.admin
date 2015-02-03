@@ -47,7 +47,7 @@ class Edbouser extends ActiveRecord
     {
         return '{{%edbouser}}';
     }
-
+//yii\base\Security
     /**
      * @inheritdoc
      */
@@ -68,6 +68,7 @@ class Edbouser extends ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
+            'password' => Yii::t('app', 'Password'),
             'email' => Yii::t('app', 'Email'),
             'sessionguid' => Yii::t('app', 'Sessionguid'),
             'sessionguid_updated_at' => Yii::t('app', 'Sessionguid Updated At'),
@@ -83,6 +84,38 @@ class Edbouser extends ActiveRecord
     public function getEDBOUserUsers()
     {
         return $this->hasMany(EdbouserUser::className(), ['id_edbouser' => 'id']);
+    }
+
+    
+    public function getEDBOUsers($id_edbouser = NULL)
+    {
+        if (is_null($id_edbouser))
+            $id_edbouser = $this->id;
+
+        $edbouseruser = EdbouserUser::find()
+                            ->where(array('id_edbouser' =>2))
+                            ->all();
+        
+        return $edbouseruser;
+        
+
+    }
+
+    public function getEDBOPassword (/*$password*/)
+    {
+        return Yii::$app->getSecurity()->decryptByPassword($this->password, $this->email);
+        
+    }
+    public function encryptEDBOPassword (/*$password*/)
+    {
+        $this->password = Yii::$app->getSecurity()->encryptByPassword($this->password, $this->email);
+        return true;
+    }
+
+    public function decryptEDBOPassword (/*$password*/)
+    {
+        $this->password = Yii::$app->getSecurity()->decryptByPassword($this->password , $this->email);
+        return $this->password;
     }
 
 

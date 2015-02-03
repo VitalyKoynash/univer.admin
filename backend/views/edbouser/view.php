@@ -30,12 +30,31 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'email:email',
-            'password',
+            //'password',
             'sessionguid',
-            'sessionguid_updated_at',
+            //'sessionguid_updated_at',
+            [
+                //'attribute' => 'created_at',
+                //'format' => 'html',
+                'label' => Yii::t('app', 'Created_at'),
+                'value' =>  Yii::$app->formatter->asDatetime($model->sessionguid_updated_at, "php:d-m-Y H:i:s"),
+                    
+            ],
             'status',
-            'created_at',
-            'updated_at',
+            [
+                //'attribute' => 'created_at',
+                //'format' => 'html',
+                'label' => Yii::t('app', 'Created_at'),
+                'value' =>  Yii::$app->formatter->asDatetime($model->created_at, "php:d-m-Y H:i:s"),
+                    
+            ],
+            //'updated_at',
+            [
+                //'attribute' => 'updated_at',
+                //'format' => 'html',
+                'label' => Yii::t('app', 'Updated_at'),
+                'value' =>  Yii::$app->formatter->asDatetime($model->updated_at, "php:d-m-Y H:i:s"),
+            ],
         ],
     ]) ?>
 

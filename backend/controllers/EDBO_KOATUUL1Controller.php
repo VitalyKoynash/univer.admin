@@ -3,16 +3,16 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\Edbouser;
-use backend\models\EdbouserSearch;
+use common\models\EDBO_KOATUUL1;
+use common\models\EDBO_KOATUUL1Search;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * EdboUserController implements the CRUD actions for Edbouser model.
+ * EDBO_KOATUUL1Controller implements the CRUD actions for EDBO_KOATUUL1 model.
  */
-class EdbouserController extends Controller
+class EDBO_KOATUUL1Controller extends Controller
 {
     public function behaviors()
     {
@@ -27,12 +27,12 @@ class EdbouserController extends Controller
     }
 
     /**
-     * Lists all Edbouser models.
+     * Lists all EDBO_KOATUUL1 models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new EdbouserSearch();
+        $searchModel = new EDBO_KOATUUL1Search();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -42,7 +42,7 @@ class EdbouserController extends Controller
     }
 
     /**
-     * Displays a single Edbouser model.
+     * Displays a single EDBO_KOATUUL1 model.
      * @param integer $id
      * @return mixed
      */
@@ -54,15 +54,15 @@ class EdbouserController extends Controller
     }
 
     /**
-     * Creates a new Edbouser model.
+     * Creates a new EDBO_KOATUUL1 model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Edbouser();
+        $model = new EDBO_KOATUUL1();
 
-        if ($model->load(Yii::$app->request->post()) && $model->encryptEDBOPassword() && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -72,7 +72,7 @@ class EdbouserController extends Controller
     }
 
     /**
-     * Updates an existing Edbouser model.
+     * Updates an existing EDBO_KOATUUL1 model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -81,10 +81,9 @@ class EdbouserController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->encryptEDBOPassword() && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            $model->decryptEDBOPassword() ;
             return $this->render('update', [
                 'model' => $model,
             ]);
@@ -92,7 +91,7 @@ class EdbouserController extends Controller
     }
 
     /**
-     * Deletes an existing Edbouser model.
+     * Deletes an existing EDBO_KOATUUL1 model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -105,15 +104,15 @@ class EdbouserController extends Controller
     }
 
     /**
-     * Finds the Edbouser model based on its primary key value.
+     * Finds the EDBO_KOATUUL1 model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Edbouser the loaded model
+     * @return EDBO_KOATUUL1 the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Edbouser::findOne($id)) !== null) {
+        if (($model = EDBO_KOATUUL1::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

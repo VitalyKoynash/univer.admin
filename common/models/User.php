@@ -106,7 +106,7 @@ class User extends ActiveRecord implements IdentityInterface
 
         parent::afterSave($insert, $changedAttributes); // Вызываем родительскую функцию afterSave()
 
-        $this->LinkUsetToEDBOAccount ();
+        $this->LinkUserToEDBOAccount ();
     }
 
     public function afterFind() 
@@ -128,7 +128,7 @@ class User extends ActiveRecord implements IdentityInterface
     выполняем после сохранения, так как при создании
     пользователя еще нет id
     */
-    private function LinkUsetToEDBOAccount ()
+    private function LinkUserToEDBOAccount ()
     {
         \Yii::trace("связь пользователя с аккаунтом ЕДБО установливается - id_edbouser = " . $this->edbouser);
         $edbouseruser = Edbouseruser::findOne(['id_user' => $this->id]);
@@ -336,8 +336,13 @@ class User extends ActiveRecord implements IdentityInterface
    }
 
 */
-    public function getEdbouser($param)
+    public function EDBOLogin() {
+        Yii::$app->edbo->EDBOGuides->Login($model->password_hash, NULL, false);
+        return true;
+    }
+    public function getEdbouser($param = NULL)
     {
+        //return $param;
         $edbouseruser = EdbouserUser::findOne(['id_user' =>$this->id]);
         
         if (!$edbouseruser)

@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'username')->textInput() ?>
-    <?= $form->field($model, 'password_hash')->textInput() ?>
+    <?= $form->field($model, 'password_hash')->passwordInput() ?>
     <?= $form->field($model, 'email')->input('email') ?>
     <?= $form->field($model, 'password_reset_token')->textInput() ?>
     <?= $form->field($model, 'status')->dropDownList(

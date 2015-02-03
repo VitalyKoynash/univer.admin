@@ -46,12 +46,25 @@ class EDBOGuides extends Component
     }
 
     public function getSoap() {
+        $this->check_soap_initialize();
         return $this->_soap;
     }
         
     
+    public function test() {
+        return [
+            function(){$res = $this->Login();  return print_r($res, true);},
+            function(){$res = $this->LanguagesGet();  return print_r($res, true);},
+            function(){$res = $this->GetLastError();  return print_r($res, true);},
+            function(){$res = $this->GlobaliInfoGet();  return print_r($res, true);},
+            function(){$res = $this->KOATUUGetL1();  return print_r($res, true);},
+            function(){$res = $this->UniversitiesGet();  return print_r($res, true);},
+            //function(){$res = count(\Yii::$app->user->identity->getEdbouser()->getEDBOUsers(2));  return print_r($res, true);},
+            //function(){$res = (\Yii::$app->user->identity->getEdbouser()->getEDBOUsers(2));  return print_r($res, true);},
+        ];
+    }
 
-
+//c5e74305-b5ab-4b4a-940c-cbe631b1b92e 
 
     /*
     * Регистрация нового пользователя на  web  сервисе
@@ -67,12 +80,17 @@ class EDBOGuides extends Component
 Ошибочным считается вызов метода,  который возвращает строку  длинной  не равной  36-и
 байтам. 
     */
-    public function Login($User = NULL, $Password = NULL) {
-        $Password = 'iowv8ermnl';//\Yii::$app->user->identity->getEdbouser('email') 
-        $User = \Yii::$app->user->identity->getEdbouser('email');
+    public function Login($User = NULL, $Password = NULL, $remembe = true) {
+
+        if (is_null($Password))
+            $Password = \Yii::$app->user->identity->getEdbouser()->getEDBOPassword();
+        
+        if (is_null($User))
+            $User = \Yii::$app->user->identity->getEdbouser('email');
+        
         $GUIDSession = \Yii::$app->user->identity->getGUIDSession();
 
-        if (EDBOSoapHelper::check_guid($GUIDSession))
+        if ($remembe && EDBOSoapHelper::check_guid($GUIDSession))
         {
             \Yii::trace(__METHOD__.' guid found = '.$GUIDSession);
             return $GUIDSession;
@@ -80,7 +98,10 @@ class EDBOGuides extends Component
 
         \Yii::trace(__METHOD__.' guid not found = '.$GUIDSession);
         //\Yii::$app->session->set('sessionId','');
-        if (!$this->status) return NULL;
+        if (!$this->status) {
+            \Yii::trace(__METHOD__.' guid not init - soap error !!! ');
+            return NULL;
+        }
 
         $ApplicationKey = Yii::$app->edbo->applicationKey;
         $ClearPreviewSession = Yii::$app->edbo->clearPreviewSession;
@@ -114,28 +135,75 @@ class EDBOGuides extends Component
             print $this->sessionId;
         }*/
     }
+
+
+    public function Logout ($SessionGUID = NULL) {
+        if (is_null($SessionGUID))
+            $SessionGUID = $this->Login();
+
+        $edbouser = \Yii::$app->user->identity->getEdbouser();
+        \Yii::trace(__METHOD__,Yii::$app->user->identity->username);
+        if (!is_null($edbouser))
+        {
+            if (Yii::$app->user->identity->username == 'admin') {
+                //$edbouser->password = NULL;            
+                $edbouser->sessionguid = NULL;
+                $edbouser->save();
+            }  else {
+                //check multiply users connected by edbuuser
+                if (count(\Yii::$app->user->identity->getEdbouser()->getEDBOUsers(2)) <= 1)
+                {
+                    $edbouser->sessionguid = NULL;
+                    $edbouser->save();
+                }
+            }
+
+            
+            
+        }
+
+        //return;
+        
+        $res = $this->soap->invoke ( "Logout", array (
+                "SessionGUID" => $SessionGUID));
+            
+        if (strlen($res['res']) == 0)
+            return TRUE;
+
+        return $res['res'];
+    }
     
     /*
      * Получения списка доступных языков используемых ЄДЕБО
      */
     public function LanguagesGet($SessionGUID = NULL) {
-        $SessionGUID = $this->Login();// \Yii::$app->user->identity->getGUIDSession();
+        
+        if (is_null($SessionGUID))
+            if(!$SessionGUID = $this->Login()) return NULL;
+
          $res = $this->soap->invoke ( "LanguagesGet", array (
                 "SessionGUID" => $SessionGUID));
-
+        
         return $res;
+
+        if (isset($res['res']) && isset( $res['res']['dLanguages']))
+            return $res['res']['dLanguages'];
+
+
+        return NULL;
     }
 
         /*
     * Получение информации об ошибке при неудачном вызове всех методов web  сервиса, кроме  Login и Logout.
     */
-    public function GetLastError($GUIDSession = NULL) {
-        if (!$GUIDSession = $this->Login())
-            return NULL;
+    public function GetLastError($SessionGUID = NULL) {
+
+        if (is_null($SessionGUID))
+            if(!$SessionGUID = $this->Login()) return NULL;
 
         $res = $this->soap->invoke ( "GetLastError", array (
-                "GUIDSession" => $GUIDSession));
-
+                "GUIDSession" => $SessionGUID));
+        /*
         if ($res == NULL) {
             //error getting error
             $res = $this->soap->invoke ( "GetLastError", array (
@@ -145,7 +213,98 @@ class EDBOGuides extends Component
             }
 
         }
+        */
         return $res;
+        if (isset($res['res']) && isset( $res['res']['dLastError']))
+            return $res['res']['dLastError'];
+        return NULL;
+    }
+
+        /*
+     * Получения информации о системе
+     */
+    public function  GlobaliInfoGet($SessionGUID = NULL) {
+        $res = $this->_GlobaliInfoGet($SessionGUID);
+
+        if (!is_null($res))
+            return $res;
+
+        if(!$this->Login(NULL, NULL, false)) 
+            return NULL;
+
+        return $this->_GlobaliInfoGet($SessionGUID);
+    }
+
+    public function  _GlobaliInfoGet($SessionGUID = NULL) {
+
+        if (is_null($SessionGUID))
+            if(!$SessionGUID = $this->Login()) return NULL;
+        
+         $res = $this->soap->invoke ( "GlobaliInfoGet", array (
+                "SessionGUID" => $SessionGUID));
+
+        //return is_null($res['res']);//['dGloabalInfo'];
+        if ($res['res'] && array_key_exists('dGloabalInfo', $res['res']))
+            return $res['res']['dGloabalInfo'];
+        return NULL;
+    }
+
+
+    /*
+    * Получения данных со справочника КОАТУУ  только 1-го уровня
+    */
+    public function  KOATUUGetL1($SessionGUID = NULL, $ActualDate = NULL, $Id_Language = NULL) {
+        if (is_null($SessionGUID))
+            if(!$SessionGUID = $this->Login()) return NULL;
+
+        if (is_null($ActualDate))
+            $ActualDate = EDBOSoapHelper::getDateNow();
+
+        if (is_null($Id_Language))
+            $Id_Language = 1;
+
+        $res = $this->soap->invoke ( "KOATUUGetL1", array (
+                "SessionGUID" => $SessionGUID,
+                "ActualDate" => $ActualDate,
+                "Id_Language" => $Id_Language      
+                 )
+                 );
+
+        if ($res['res'] && array_key_exists('dKOATUU', $res['res']))
+            return $res['res']['dKOATUU'];
+        return NULL;
+    }
+
+
+     /*
+     * UniversitiesGet
+     */
+    
+    public function  UniversitiesGet($SessionGUID = NULL, $UniversityKode = '', 
+            $Id_Language = NULL,  $ActualDate = NULL, $UniversityName = '') {
+
+        if (is_null($SessionGUID))
+            if(!$SessionGUID = $this->Login()) return NULL;
+
+        if (is_null($ActualDate))
+            $ActualDate = EDBOSoapHelper::getDateNow();
+
+        if (is_null($Id_Language))
+            $Id_Language = 1;
+
+      $res = $this->soap->invoke ( "UniversitiesGet", array (
+            "SessionGUID" => $SessionGUID,
+            "UniversityKode" => $UniversityKode,
+            "Id_Language" => $Id_Language, 
+            "ActualDate" => $ActualDate, 
+            "UniversityName" => $UniversityName,
+            
+            ));
+
+        return $res;
+        if ($res['res'] && array_key_exists('dKOATUU', $res['res']))
+            return $res['res']['dKOATUU'];
+        return NULL;
     }
 
 
