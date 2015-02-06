@@ -13,6 +13,37 @@
     <!--blockquote><?php $res=Yii::$app->edbo->EDBOGuides->Login(); print_r($res) ?></blockquote>
     <blockquote><?php $res=Yii::$app->edbo->EDBOGuides->LanguagesGet(); print_r($res) ?></blockquote>
     <blockquote><?php $res=Yii::$app->edbo->EDBOGuides->GetLastError(); print_r($res) ?></blockquote-->
+    <?php
+        use yii\bootstrap\Tabs;
+            echo Tabs::widget([
+            'items' => [
+                [
+                    'label' => 'One',
+                    'content' => '1 - Anim pariatur cliche...',
+                    'active' => true
+                ],
+                [
+                    'label' => 'Two',
+                    'content' => '2 - Anim pariatur cliche...',
+                    'headerOptions' => [],
+                    'options' => ['id' => 'myveryownID'],
+                ],
+                [
+                    'label' => 'Dropdown',
+                    'items' => [
+                         [
+                             'label' => 'DropdownA',
+                             'content' => '3 - DropdownA, Anim pariatur cliche...',
+                         ],
+                         [
+                             'label' => 'DropdownB',
+                             'content' => '4 - DropdownB, Anim pariatur cliche...',
+                         ],
+                    ],
+                ],
+            ],
+        ]);
+    ?>
     <?php foreach (Yii::$app->edbo->EDBOGuides->test() as $key => $test_item_func): ?>
         <blockquote> <?php echo $test_item_func(); ?> </blockquote>
     <?php endforeach; ?>

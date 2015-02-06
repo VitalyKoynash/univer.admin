@@ -58,22 +58,7 @@ class m130524_201442_init extends Migration
         //$this->addForeignKey('fk_edbouser_user_id_edbouser', '{{%edbouser}}','id_edbouser','{{%edbouser}}','id','CASCADE','CASCADE');
 
 
-        $this->createTable('{{%edbo_KOATUUL1}}', [
-            'id' => Schema::TYPE_PK,
-            'Id_KOATUU'  => Schema::TYPE_INTEGER . ' DEFAULT NULL',
-            'KOATUUCode' => Schema::TYPE_STRING . ' DEFAULT NULL',
-            'Type' => Schema::TYPE_STRING . ' DEFAULT NULL',
-            'Id_KOATUUName'  => Schema::TYPE_INTEGER . ' DEFAULT NULL',
-            'KOATUUName' => Schema::TYPE_STRING . ' DEFAULT NULL',
-            'KOATUUFullName' => Schema::TYPE_STRING . ' DEFAULT NULL',
-            'KOATUUDateBegin' => Schema::TYPE_DATETIME . ' DEFAULT NULL',
-            'KOATUUDateEnd' => Schema::TYPE_DATETIME . ' DEFAULT NULL',
-            'Id_Language' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
-            'KOATUUCodeL1' => Schema::TYPE_STRING . ' DEFAULT NULL',
-            'KOATUUCodeL2' => Schema::TYPE_STRING . ' DEFAULT NULL',
-            'KOATUUCodeL3' => Schema::TYPE_STRING . ' DEFAULT NULL',
 
-        ], $tableOptions);
 
     }
 

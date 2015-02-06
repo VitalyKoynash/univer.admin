@@ -26,6 +26,7 @@ return [
         ],
         'EDBOtest' => [
             'class' => 'app\modules\EDBOtest\Module',
+            'layout' => 'left-menu', // default null. other avaliable value 'right-menu'
         ],
     ],
     'components' => [
