@@ -32,6 +32,10 @@ $this->title = Yii::$app->name;
                     'class' => 'navbar-inverse navbar-fixed-top',
                 ],
             ]);
+
+            
+            //echo '<div class="navbar-nav navbar-left nav">EDBODATA</div>';
+
             $menuItems = [
                 ['label' => 'Home', 'url' => ['/site/index']],
             ];
@@ -45,7 +49,7 @@ $this->title = Yii::$app->name;
                     
                 $menuItems[] = [
                     //'label' => 'Logout (' . Yii::$app->user->identity->username .')',
-                'label' => 'Logout (' . Yii::$app->user->identity->username . ' ['. Yii::$app->user->identity->getEdbouser('email') .']'.')',
+                    'label' => 'Logout (' . Yii::$app->user->identity->username . ' ['. Yii::$app->user->identity->getEdbouser('email') .']'.')',
                     'url' => ['/site/logout'],
                     'linkOptions' => ['data-method' => 'post']];
             }
@@ -60,7 +64,24 @@ $this->title = Yii::$app->name;
             ]);
             //~~~~~~~~~~~~~~~
 
+            echo '
+            
+                <form class="pull-left">
+
+                <div id="EDBO_status" style="color:RGB(0,200,0);" class="navbar-inverse navbar-brand">
+                EDBO
+                </div>
+                </form>
+            ';
+
             NavBar::end();
+            /*
+            $js = '$("#EDBO_status").on("pjax:end", function() {
+               $.pjax.reload({container:"#medicine"});  //Reload GridView
+           });'
+
+            $this->registerJs($js, $this::POS_READY);
+            */
         ?>
 
         <div class="container">

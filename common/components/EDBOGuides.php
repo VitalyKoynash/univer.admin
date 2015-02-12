@@ -52,6 +52,7 @@ class EDBOGuides extends Component
         
     
     public function test() {
+        return [];
         return [
             function(){$res = $this->Login();  return print_r($res, true);},
             function(){$res = $this->LanguagesGet();  return print_r($res, true);},
@@ -177,7 +178,7 @@ class EDBOGuides extends Component
      * Получения списка доступных языков используемых ЄДЕБО
      */
     public function LanguagesGet($SessionGUID = NULL) {
-        
+        return;
         if (is_null($SessionGUID))
             if(!$SessionGUID = $this->Login()) return NULL;
 
@@ -197,7 +198,7 @@ class EDBOGuides extends Component
     * Получение информации об ошибке при неудачном вызове всех методов web  сервиса, кроме  Login и Logout.
     */
     public function GetLastError($SessionGUID = NULL) {
-
+        return;
         if (is_null($SessionGUID))
             if(!$SessionGUID = $this->Login()) return NULL;
 

@@ -24,8 +24,8 @@ return [
                 'route' => null, // disable menu
             */
         ],
-        'EDBOtest' => [
-            'class' => 'app\modules\EDBOtest\Module',
+        'EDBOadmin' => [
+            'class' => 'app\modules\EDBOadmin\Module',
             'layout' => 'left-menu', // default null. other avaliable value 'right-menu'
         ],
     ],

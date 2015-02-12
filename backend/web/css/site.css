@@ -89,3 +89,10 @@ a.desc:after {
     padding: 10px 20px;
     margin: 0 0 15px 0;
 }
+
+.loader {
+  display:none;
+  background:transparent url('ajax-loader.gif') no-repeat center center;
+  width:20px;
+  height:20px;
+}
