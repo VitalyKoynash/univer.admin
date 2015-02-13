@@ -57,8 +57,41 @@ class m130524_201442_init extends Migration
         //$this->addForeignKey('fk_edbouser_user_id_user', '{{%edbouser}}','id_user','{{%user}}','id','CASCADE','CASCADE');
         //$this->addForeignKey('fk_edbouser_user_id_edbouser', '{{%edbouser}}','id_edbouser','{{%edbouser}}','id','CASCADE','CASCADE');
 
+        
+        
+        $table_name = "{{%EDBO-KOATUUL1}}";
+        $this->createTable($table_name, [
+            'id' => Schema::TYPE_PK,
+            'Id_KOATUU'  => Schema::TYPE_INTEGER . ' DEFAULT NULL',
+            'KOATUUCode' => Schema::TYPE_STRING . ' DEFAULT NULL',
+            'Type' => Schema::TYPE_STRING . ' DEFAULT NULL',
+            'Id_KOATUUName'  => Schema::TYPE_INTEGER . ' DEFAULT NULL',
+            'KOATUUName' => Schema::TYPE_STRING . ' DEFAULT NULL',
+            'KOATUUFullName' => Schema::TYPE_STRING . ' DEFAULT NULL',
+            'KOATUUDateBegin' => Schema::TYPE_DATETIME . ' DEFAULT NULL',
+            'KOATUUDateEnd' => Schema::TYPE_DATETIME . ' DEFAULT NULL',
+            'Id_Language' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
+            'KOATUUCodeL1' => Schema::TYPE_STRING . ' DEFAULT NULL',
+            'KOATUUCodeL2' => Schema::TYPE_STRING . ' DEFAULT NULL',
+            'KOATUUCodeL3' => Schema::TYPE_STRING . ' DEFAULT NULL',
+            'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
+            'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL',
 
+        ], $tableOptions);
 
+        $this->createIndex('idx_KOATUUL1_KOATUUCodeL1',  $table_name , 'KOATUUCodeL1', false);
+        $this->createIndex('idx_KOATUUL1_KOATUUCodeL2',  $table_name , 'KOATUUCodeL2', false);
+        $this->createIndex('idx_KOATUUL1_KOATUUCodeL3',  $table_name , 'KOATUUCodeL3', false);
+        $this->createIndex('idx_KOATUUL1_KOATUUFullName',$table_name , 'KOATUUFullName', false);
+        $this->createIndex('idx_KOATUUL1_KOATUUName',    $table_name , 'KOATUUName', false);
+        
+
+        $this->createTable('{{%edbo_directorytables}}', [
+            'id' => Schema::TYPE_PK,
+            'name_directory' => Schema::TYPE_STRING . ' NOT NULL',
+            'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
+            'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL',
+        ], $tableOptions);
 
     }
 

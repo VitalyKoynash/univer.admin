@@ -49,6 +49,7 @@ class ExportController extends \yii\web\Controller
         $config['methods']['SetAuthor'] = ['Krajee Solutions'];
         $config['methods']['SetCreator'] = ['Krajee Yii2 Grid Export Extension'];
         $config['content'] = $content;
+        $config ['mode'] = Pdf::MODE_UTF8;
         $pdf = new Pdf($config);
         echo $pdf->render();
     }

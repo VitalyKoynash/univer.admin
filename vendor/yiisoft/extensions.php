@@ -111,4 +111,23 @@ return array (
       '@nirvana/showloading' => $vendorDir . '/nirvana-msu/yii2-showloading',
     ),
   ),
+  'schmunk42/yii2-giiant' => 
+  array (
+    'name' => 'schmunk42/yii2-giiant',
+    'version' => '0.2.0.0',
+    'alias' => 
+    array (
+      '@schmunk42/giiant' => $vendorDir . '/schmunk42/yii2-giiant',
+    ),
+    'bootstrap' => 'schmunk42\\giiant\\Bootstrap',
+  ),
+  'kartik-v/yii2-mpdf' => 
+  array (
+    'name' => 'kartik-v/yii2-mpdf',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@kartik/mpdf' => $vendorDir . '/kartik-v/yii2-mpdf',
+    ),
+  ),
 );

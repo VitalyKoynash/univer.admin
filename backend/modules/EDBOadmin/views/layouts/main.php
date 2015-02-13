@@ -65,6 +65,9 @@ $this->title = Yii::$app->name;
                 'items' => array_merge($mi,  $menuItems),
             ]);
             //~~~~~~~~~~~~~~~
+            echo '<form class="pull-left">';
+            echo app\modules\EDBOadmin\widgets\EDBOStatusWidget::widget(); //['interval_check' => 30000]
+            echo '</form>';
 
             NavBar::end();
         ?>

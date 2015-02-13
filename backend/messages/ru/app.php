@@ -17,6 +17,8 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
+    'Edbo Directorytables' => 'Справочники ЕДБО',
+    'Name_directory' => 'Название справочника',
     'Sessionguid' => 'EDBO GUID',
     'Sessionguid_updated_at' => 'Сессия обновлена',
     'You can not remove yourself or first admin!' => 'Вы не можете удалить сами себя и пользователя admin!',

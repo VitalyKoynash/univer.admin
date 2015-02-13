@@ -54,3 +54,8 @@ run
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 migrations			https://github.com/yiisoft/yii2/blob/master/docs/guide/db-migrations.md
+
+
+for russian in pdf
+https://github.com/kartik-v/yii2-mpdf/issues/1
+$ config ['mode'] = Pdf :: MODE_UTF8;

@@ -5,6 +5,8 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 
+//use app\modules\EDBOadmin\widgets\EDBOStatusWidget;
+
 /* @var $this \yii\web\View */
 /* @var $content string */
 
@@ -54,16 +56,26 @@ $this->title = Yii::$app->name;
                     'linkOptions' => ['data-method' => 'post']];
             }
             
-            //~~~~~~~~~~~~~~~
-
+            //~~~~~~~~~~~~~~~ 
             use mdm\admin\components\MenuHelper;
+
+            
+            
+
             $mi = MenuHelper::getAssignedMenu(Yii::$app->user->id, 1);
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav navbar-right'],
                 'items' => array_merge($mi,  $menuItems),
             ]);
-            //~~~~~~~~~~~~~~~
 
+            
+            //~~~~~~~~~~~~~~~
+            if (!Yii::$app->user->isGuest) {
+            echo '<form class="pull-left">';
+            echo app\modules\EDBOadmin\widgets\EDBOStatusWidget::widget(); //['interval_check' => 30000]
+            echo '</form>';
+            }
+/*
             echo '
             
                 <form class="pull-left">
@@ -73,7 +85,7 @@ $this->title = Yii::$app->name;
                 </div>
                 </form>
             ';
-
+*/
             NavBar::end();
             /*
             $js = '$("#EDBO_status").on("pjax:end", function() {
