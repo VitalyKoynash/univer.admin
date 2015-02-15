@@ -51,7 +51,7 @@ class EdboDirectorytables extends ActiveRecord
         return [
             [['name_directory'], 'required'], //, 'created_at', 'updated_at'
             //[['created_at', 'updated_at'], 'integer'],
-            [['name_directory'], 'string'] //, 'max' => 255
+            [['name_directory', 'description', 'function'], 'string'] //, 'max' => 255
         ];
     }
 
@@ -63,6 +63,8 @@ class EdboDirectorytables extends ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'name_directory' => Yii::t('app', 'Name Directory'),
+            'description' => Yii::t('app', 'Description'),
+            'function' => Yii::t('app', 'Function'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
@@ -77,18 +79,5 @@ class EdboDirectorytables extends ActiveRecord
         }
     }
 
-    static public function reloadTable($id) {
-
-        $model = EdboDirectorytables::findOne($id);
-
-        $class = 'common\\models\\EDBO'.$model->name_directory;
-
-        if (!class_exists($class)) return false;
-
-        if ($model)
-            $model->save();
-
-        return true;
-    }
 
 }

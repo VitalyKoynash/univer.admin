@@ -1,8 +1,6 @@
 <?php
 namespace common\components;
-
 use yii\base\Object;
-//use yii\base\ErrorException;
 
 /**
  * Soap for DEBO
@@ -12,57 +10,35 @@ use yii\base\Object;
 class EDBOSoapHelper extends Object 
 {
     
-    private $_soapClient ; // EDBOGuides or EDBOPerson
-    private $_debug = TRUE;
-    //private $_status = \FALSE;
+    private $soapClient ;
+    private $debug = TRUE;
     private $_status_message = '';
 
 
     public function __construct($soap_address) {
 
             try {
-                \Yii::beginProfile('_soapClient');
-                $this->_soapClient = new \SoapClient ($soap_address, [
+                \Yii::beginProfile(__METHOD__);
+                $this->soapClient = new \SoapClient ($soap_address, [
                     'encoding'=>'utf-8',
                     "exceptions" => 1,
-                    //'cache_wsdl' => \WSDL_CACHE_MEMORY,
+                    'cache_wsdl' => \WSDL_CACHE_MEMORY,
                     ]);
                 \Yii::endProfile('_soapClient');
                 \Yii::trace("succesfully connect to ".$soap_address);
              } catch (\SoapFault  $ex) { /*SoapFault*/
                 
-                //ini_set('display_errors',$save_errlogin);
-                $this->_soapClient = NULL;
-                $this->_status_message = $ex->faultstring;//getMessage()
-                \Yii::warning($this->_status_message);
-                //\Yii::warning($ex->getMessage(), __METHOD__);
-                //Yii::$app->session->set('soap','false');
-                //Yii::$app->session->set('soap_info', $ex->getMessage());
-                //throw $ex;
+                $this->soapClient = NULL;
+                $this->_status_message = $ex->faultstring;
+                \Yii::warning("error connect to ".$soap_address.' '.$this->_status_message);
             }   
 
     }
 
-    public function getDebug(){
-        return $this->_debug;
-    }
-    public function setDebug($value){
-        $this->_debug = $value;
-    }
 
-    public function getSoapClient(){
-        return $this->_soapClient;
-    }
    
-
-    /*
-    * 
-    */
-    public function getStatus() {
-        if (is_null($this->_soapClient)) {
-            return \FALSE;
-        }
-        return \TRUE;
+    public function getStatusSoap() {
+        return !is_null($this->soapClient);
     }
 
 
@@ -92,7 +68,7 @@ class EDBOSoapHelper extends Object
         
         $res = array('status' => FALSE,'message' => $this->_status_message,'res' => NULL, 'soap' => NULL);
         
-        if (!$this->status) return  $res;
+        if (!$this->statusSoap) return  $res;
 
         if ($this->debug)
             \Yii::beginProfile($method);
@@ -104,18 +80,6 @@ class EDBOSoapHelper extends Object
             $result_from_soap = $invs->{$method."Result"};
             $result = $this->buildObject($result_from_soap);
 
-            /*
-            if ($this->debug) {
-                ob_start();
-                echo '<div class="soap_debug">____________ result _____________</div>';
-                echo '<div class="soap_debug">';
-                var_dump($res);
-                echo '</div>';
-                $message = ob_get_clean() ;
-
-            } 
-            */
-
             $res['status'] = TRUE;
             $res['message'] = $message;
             $res['res'] = $result;
@@ -123,7 +87,7 @@ class EDBOSoapHelper extends Object
             
         } catch (\Exception $ex) {
             
-            $message = $ex->getMessage() .'\n'.print_r($params, true)/*.ob_get_contents()*/ ;
+            $message = $ex->getMessage() .'\n'.print_r($params, true) ;
             
             \Yii::warning($message);
             

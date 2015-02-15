@@ -48,25 +48,22 @@ $this->params['breadcrumbs'][] = $this->title;
                     return GridView::ROW_COLLAPSED;
                 },
                 'detail'=>function ($model, $key, $index, $column) {
-                    //return "$key, $index";
-                    
+                   
                     $class = 'app\\modules\\EDBOadmin\\models\\'.$model->name_directory."Search";
 
                     if (class_exists($class)) {
-                    //$class = 'app\\modules\\EDBOadmin\\models\\'.$model->name_directory."Search";
-                    $searchModel_ = new $class();
-                    //$searchModel_ = new KOATUUL1Search();
-                    $dataProvider_ = $searchModel_->search(Yii::$app->request->queryParams);
+                        $searchModel_detail = new $class();
+                        $dataProvider_detail = $searchModel_detail->search(Yii::$app->request->queryParams);
 
-                    return Yii::$app->controller->renderPartial('_expand-table-details', 
-                        ['dataProvider'=> $dataProvider_,
-                        'searchModel' => $searchModel_,
-                        ]);
+                        return Yii::$app->controller->renderPartial('_expand-table-details', 
+                            ['dataProvider'=> $dataProvider_detail,
+                            'searchModel' => $searchModel_detail,
+                            ]);
                     } else {
-                        return "Отсутсвует модель данных";
+                        return "";
                     }
                 },
-                'headerOptions'=>['class'=>'kartik-sheet-style'] 
+                //'headerOptions'=>['class'=>'kartik-sheet-style'] 
                 //'disabled'=>true,
                 //'detailUrl'=>Url::to(['/site/test-expand'])
             ],
@@ -77,6 +74,26 @@ $this->params['breadcrumbs'][] = $this->title;
             'attribute' => 'name_directory',
                 'format' => 'html',
                 'label' => Yii::t('app', 'Name_directory'),
+            ],
+            [
+            'attribute' => 'description',
+                'format' => 'html',
+                'label' => Yii::t('app', 'description'),
+                'value' => function ($model) {
+                    if (is_null($model->description))
+                        return NULL;
+                    return substr($model->description, 0, 100);
+                }
+            ],
+            [
+            'attribute' => 'function',
+                'format' => 'html',
+                'label' => Yii::t('app', 'function'),
+                'value' => function ($model) {
+                    if (is_null($model->function))
+                        return NULL;
+                    return substr($model->function, 0, 100);
+                }
             ],
             /*
            [

@@ -59,7 +59,7 @@ class m130524_201442_init extends Migration
 
         
         
-        $table_name = "{{%EDBO-KOATUUL1}}";
+        $table_name = "{{%KOATUUL1}}";
         $this->createTable($table_name, [
             'id' => Schema::TYPE_PK,
             'Id_KOATUU'  => Schema::TYPE_INTEGER . ' DEFAULT NULL',
@@ -89,6 +89,8 @@ class m130524_201442_init extends Migration
         $this->createTable('{{%edbo_directorytables}}', [
             'id' => Schema::TYPE_PK,
             'name_directory' => Schema::TYPE_STRING . ' NOT NULL',
+            'description' => Schema::TYPE_TEXT . ' DEFAULT NULL',
+            'function' => Schema::TYPE_TEXT . ' DEFAULT NULL',
             'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
             'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL',
         ], $tableOptions);

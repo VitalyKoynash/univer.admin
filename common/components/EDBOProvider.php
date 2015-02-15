@@ -20,12 +20,8 @@ class EDBOProvider extends Component
     public $hostEDBOPerson = "http://10.22.22.129:8080/EDBOPerson/EDBOPerson.asmx?WSDL";
 
     private $_EDBOGuides = NULL;
-    /*
-    public function init(){
-        parent::init();
-        
-    }*/
-
+    
+/*
     public function info(){
         $info = 
         "<div>EDBO:</div>
@@ -35,7 +31,7 @@ class EDBOProvider extends Component
         <p>". $this->EDBOGuides->info().'</p>';
         return $info;
     }
-
+*/
 
     public function getEDBOGuides()
     {

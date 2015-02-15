@@ -9,10 +9,9 @@
         You may customize this page by editing the following file:<br>
         <code><?= __FILE__ ?></code>
     </p>
-    <p><?=Yii::$app->edbo->info();?></p>
-    <!--blockquote><?php $res=Yii::$app->edbo->EDBOGuides->Login(); print_r($res) ?></blockquote>
-    <blockquote><?php $res=Yii::$app->edbo->EDBOGuides->LanguagesGet(); print_r($res) ?></blockquote>
-    <blockquote><?php $res=Yii::$app->edbo->EDBOGuides->GetLastError(); print_r($res) ?></blockquote-->
+    <p> <?= \Yii::$app->edbo->hostEDBOGuides ?>  </p>
+    <p> <?= \Yii::$app->edbo->hostEDBOPerson ?>  </p>
+
     <?php
         //use yii\bootstrap\Tabs;
     use kartik\tabs\TabsX;;
@@ -21,7 +20,9 @@
                 [
                     'label' => 'Reload reference data of EDBO',
                     //'active' => true,
-                    'content' => $this->render('../tabs/index'),
+                    'content' => $this->render('../tabs/index', [
+                        'model' => NULL,
+                    ]),
                     //'url'=>[\yii\helpers\Url::to(['/EDBOtest/tabs/tabs-data'])],
                     //'linkOptions'=>['data-url'=>\yii\helpers\Url::to(['/EDBOadmin/tabs/tabs-data'])],
                     //'linkOptions' => ['data-url' => 'edbotest/tabs/tabsData'],
@@ -52,9 +53,5 @@
             ],
         ]);
     ?>
-    <?php foreach (Yii::$app->edbo->EDBOGuides->test() as $key => $test_item_func): ?>
-        <blockquote> <?php echo $test_item_func(); ?> </blockquote>
-    <?php endforeach; ?>
-
 
 </div>

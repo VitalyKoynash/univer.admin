@@ -30,7 +30,7 @@ class EDBOKOATUUL1 extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'EDBO-KOATUUL1';
+        return 'KOATUUL1';
     }
 
     /**

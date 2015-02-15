@@ -59,3 +59,6 @@ migrations			https://github.com/yiisoft/yii2/blob/master/docs/guide/db-migration
 for russian in pdf
 https://github.com/kartik-v/yii2-mpdf/issues/1
 $ config ['mode'] = Pdf :: MODE_UTF8;
+
+kartik-v grid пергружает страницу при переключении All/Pages
+добавить 'data-pjax'=>1 в функции renderToggleData() в строке 1166

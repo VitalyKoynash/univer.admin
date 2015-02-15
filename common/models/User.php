@@ -109,6 +109,38 @@ class User extends ActiveRecord implements IdentityInterface
         $this->LinkUserToEDBOAccount ();
     }
 
+    /*
+    после сохранения данных пользователя устанавливаем связь пользователя с пользователем ЕДБО.
+    Выполняем это после сохранения, так как при создании  пользователя еще нет id
+    */
+    private function LinkUserToEDBOAccount ()
+    {
+        \Yii::trace("связь пользователя с аккаунтом ЕДБО установливается - id_edbouser = " . $this->edbouser);
+        $edbouseruser = Edbouseruser::findOne(['id_user' => $this->id]);
+        
+        if ($this->edbouser < 1 && $edbouseruser) { 
+        /* связь с аккаунтом едбо не установлена при сохранении, поэтому удаляем запись
+        соответствия аккаунтов
+        */
+            
+            $edbouseruser->delete();
+            \Yii::trace("связь пользователя с аккаунтом ЕДБО разорвана");
+
+        } else {
+            if (!$edbouseruser)
+                $edbouseruser = new Edbouseruser ();
+                
+            $edbouseruser->id_user = $this->id;
+            $edbouseruser->id_edbouser = $this->edbouser;
+            $edbouseruser->save();
+            \Yii::trace("связь пользователя с аккаунтом ЕДБО установлена");
+        }            
+
+    }
+
+    /* $edbouser - не представлена в таблице БД, поэтому после успешного поиска
+    * заполнем эту переменную вручную
+    */
     public function afterFind() 
     {
         \Yii::trace(__METHOD__ . ' id_user = '.$this->id);
@@ -123,33 +155,7 @@ class User extends ActiveRecord implements IdentityInterface
         }
     }
 
-    /*
-    связь пользователя с пользователем ЕДБО
-    выполняем после сохранения, так как при создании
-    пользователя еще нет id
-    */
-    private function LinkUserToEDBOAccount ()
-    {
-        \Yii::trace("связь пользователя с аккаунтом ЕДБО установливается - id_edbouser = " . $this->edbouser);
-        $edbouseruser = Edbouseruser::findOne(['id_user' => $this->id]);
-        if ($this->edbouser < 1) { // связь с аккаунтом едбо не выбрана
-            if ($edbouseruser)  
-            {
-                $edbouseruser->delete();
-                \Yii::trace("связь пользователя с аккаунтом ЕДБО разорвана");
-            }
 
-        } else {
-            if (!$edbouseruser)
-                $edbouseruser = new Edbouseruser ();
-                
-            $edbouseruser->id_user = $this->id;
-            $edbouseruser->id_edbouser = $this->edbouser;
-            $edbouseruser->save();
-            \Yii::trace("связь пользователя с аккаунтом ЕДБО установлена");
-        }            
-
-    }
     /**
      * @inheritdoc
      */
@@ -329,29 +335,25 @@ class User extends ActiveRecord implements IdentityInterface
         
         return $statuses;
     } 
-/*
-    public function getComments()
-   {
-      return $this->hasMany('Comment', array('post_id' => 'id'));
-   }
 
-*/
+/*
     public function EDBOLogin() {
         Yii::$app->edbo->EDBOGuides->Login($model->password_hash, NULL, false);
         return true;
     }
+*/
+
+    /*возвращает объект аккаунта ЕДБО или его параметр, заданный в аргументе $param
+    */
     public function getEdbouser($param = NULL)
     {
-        //return $param;
         $edbouseruser = EdbouserUser::findOne(['id_user' =>$this->id]);
         
-        if (!$edbouseruser)
-            return NULL;
+        if (!$edbouseruser)  return NULL;
         
         $edbouser =  Edbouser::findOne(['id' =>$edbouseruser->id_edbouser]);
         
-        if (!$edbouser)
-            return NULL;
+        if (!$edbouser) return NULL;
 
         if (is_null($param))
             return $edbouser;
@@ -359,58 +361,40 @@ class User extends ActiveRecord implements IdentityInterface
             return $edbouser->{$param};
     } 
 
+    /*проверка -закепления какого-либо ЕДБО аккаунта за пользователем
+    */
     public function hasEdboAccount()
     {
         return is_null($this->getEdbouser());
     }
 
+    /*установка ИД сессии
+    */
     public function setGUIDSession($GUIDSession)
     {
 
-        $edbouseruser = EdbouserUser::findOne(['id_user' =>$this->id]);
-        
-        if (!$edbouseruser)
-            return;
-        
-        $edbouser =  Edbouser::findOne(['id' =>$edbouseruser->id_edbouser]);
-        
-        if (!$edbouser)
-            return;
-
-        //if (is_null($GUIDSession))
-        //    return;
-        
+        $edbouser = $this->getEdbouser();
+        if (!$edbouser)  return;
 
         $edbouser->sessionguid = $GUIDSession;
-        $edbouser->touch('sessionguid_updated_at');
+        $edbouser->touch('sessionguid_updated_at'); //устанавливаем дату обновления
         $edbouser->save();
     } 
 
 
     public function getGUIDSession()
     {
-
-        $edbouseruser = EdbouserUser::findOne(['id_user' =>$this->id]);
-        
-        if (!$edbouseruser)
-            return NULL;
-        
-        $edbouser =  Edbouser::findOne(['id' =>$edbouseruser->id_edbouser]);
-        
-        if (!$edbouser)
-            return NULL;
-
-        return $edbouser->sessionguid;
+        return $this->getEdbouser('sessionguid');
     } 
 
     public function getEDBOUserId()
     {
-        $edbouser = EdbouserUser::findOne(['id_user' =>$this->id]);
+        $edbouserUser = EdbouserUser::findOne(['id_user' =>$this->id]);
 
-        if (!$edbouser)
+        if (!$edbouserUser)
             return NULL;
 
-        return $edbouser->id_edbouser;
+        return $edbouserUser->id_edbouser;
     } 
 
     public function getEDBOUsersArray()
@@ -421,15 +405,7 @@ class User extends ActiveRecord implements IdentityInterface
             return NULL;
 
         return yii\helpers\ArrayHelper::map($edbousers, 'id', 'email');
-        //return $edbouser->id_edbouser;
-    } 
 
-/*
-    public static function getEDBOUserByUser($id_user)
-    {
-        return EdbouserUser::findOne('id_user' =>$id_user)  ;
-        //return $this->hasMany(EdbouserUser::className(), ['id_edbouser' => 'id']);
-    }
-    */
+    } 
 
 }

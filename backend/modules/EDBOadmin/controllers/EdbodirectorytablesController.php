@@ -10,6 +10,8 @@ use yii\filters\VerbFilter;
 use app\modules\EDBOadmin\models\EdboDirectorytables;
 use app\modules\EDBOadmin\models\EdboDirectorytablesSearch;
 
+use app\modules\EDBOadmin\components\UpdateFromEDBO;
+
 /**
  * EdbodirectorytablesController implements the CRUD actions for EdboDirectorytables model.
  */
@@ -109,15 +111,13 @@ class EdbodirectorytablesController extends Controller
     public function actionUpdatetable($id)
     {
         //sleep(3);
-        $res = array('status'=>true);
+        $res['status'] = UpdateFromEDBO::update($id);
+        //$res['status'] = EdboDirectorytables::LoadTableFromEDBO($id);
 
-        $res['status'] = EdboDirectorytables::reloadTable($id);
-        /*
-        $model = $this->findModel($id);
-        if ($model)
-            $model->save();
-        */
-        Yii::$app->getResponse()->format = yii\web\Response::FORMAT_JSON;
+        $request = Yii::$app->request;
+
+        if ($request->isAjax)
+            Yii::$app->getResponse()->format = yii\web\Response::FORMAT_JSON;
         
         return $res;
         

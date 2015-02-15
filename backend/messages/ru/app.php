@@ -17,6 +17,8 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
+    'Id Directory' => 'Справочник',
+    'Show' => 'Показать',
     'Edbo Directorytables' => 'Справочники ЕДБО',
     'Name_directory' => 'Название справочника',
     'Sessionguid' => 'EDBO GUID',

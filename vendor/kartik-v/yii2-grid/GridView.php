@@ -1163,7 +1163,7 @@ HTML;
         $id = $this->_toggleDataKey;
         $label = ArrayHelper::remove($this->toggleDataOptions[$tag], 'label', '');
         $input = Html::checkbox($id, $this->_isShowAll, ['id'=>$id, 'style'=>'display:none']);
-        return '<div class="btn-group">' . Html::beginForm('', 'post', []) . Html::label($label, $id, $this->toggleDataOptions[$tag]) . $input . '</form></div>';
+        return '<div class="btn-group">' . Html::beginForm('', 'post', ['data-pjax'=>1]) . Html::label($label, $id, $this->toggleDataOptions[$tag]) . $input . '</form></div>';
     }
     
     /**

@@ -14,6 +14,8 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'name_directory')->textInput(['maxlength' => 255]) ?>
+    <?= $form->field($model, 'description')->textArea(['rows'=>2, 'cols'=>50]) ?>
+    <?= $form->field($model, 'function')->textArea(['rows'=>3, 'cols'=>50]) ?>
 
     <!--?= $form->field($model, 'created_at')->textInput() ?-->
 

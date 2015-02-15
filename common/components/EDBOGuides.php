@@ -16,56 +16,44 @@ use common\components\EDBOSoapHelper;
 class EDBOGuides extends Component
 {
     private $_soap = NULL; // EDBOSOapHelper
-    private $_try_init_flag = false; // флаг, сигнализирующий, что была попытка инициализировать SOAP
+
+    /* флаг, сигнализирующий, что была попытка инициализировать SOAP
+    *  Предотвращает повторную загрузку при сбоях соединения с СОАП
+    */
+    private $firstInit = true; 
 
     
-    private function check_soap_initialize(){
+    private function initSoap(){
 
-        if ($this->_try_init_flag && is_null($this->_soap)) // CHECK SOAP ERROR
-            return FALSE;
-        
-        $this->_try_init_flag = TRUE; // ставим флаг попытки инициализации
-
-        $soap_address = \Yii::$app->edbo->hostEDBOGuides;
-        if (is_null($this->_soap))
-            $this->_soap = new EDBOSoapHelper($soap_address);
-        
-        if (!$this->_soap->status) {
-            $this->_soap = NULL;
-            return FALSE;
+        // не первая инициализация и создан объект соап
+        if (!$this->firstInit && !is_null($this->_soap)) {
+            return $this->_soap;
+        } elseif (!$this->firstInit && is_null($this->_soap)) {
+            \Yii::warning("initSoap (1) - NULL");
+            return NULL;
         }
-        return TRUE;
-    }
+        
+        
+        $this->firstInit = false; // ставим флаг попытки инициализации
 
-    public function info(){
-        return "status connection - ".($this->status ? 'succesfully' : 'failed');
+        $this->_soap = new EDBOSoapHelper( \Yii::$app->edbo->hostEDBOGuides );
+        
+        if (!$this->_soap->statusSoap) {
+            $this->_soap = NULL;
+            \Yii::warning("initSoap (2) - NULL");
+            return NULL;
+        }
+        return $this->_soap ;
     }
 
     public function getStatus() {
-        return $this->check_soap_initialize();
+        return !is_null($this->initSoap());
     }
 
     public function getSoap() {
-        $this->check_soap_initialize();
-        return $this->_soap;
+        return $this->initSoap();
     }
-        
     
-    public function test() {
-        return [];
-        return [
-            function(){$res = $this->Login();  return print_r($res, true);},
-            function(){$res = $this->LanguagesGet();  return print_r($res, true);},
-            function(){$res = $this->GetLastError();  return print_r($res, true);},
-            function(){$res = $this->GlobaliInfoGet();  return print_r($res, true);},
-            function(){$res = $this->KOATUUGetL1();  return print_r($res, true);},
-            function(){$res = $this->UniversitiesGet();  return print_r($res, true);},
-            //function(){$res = count(\Yii::$app->user->identity->getEdbouser()->getEDBOUsers(2));  return print_r($res, true);},
-            //function(){$res = (\Yii::$app->user->identity->getEdbouser()->getEDBOUsers(2));  return print_r($res, true);},
-        ];
-    }
-
-//c5e74305-b5ab-4b4a-940c-cbe631b1b92e 
 
     /*
     * Регистрация нового пользователя на  web  сервисе
@@ -83,6 +71,9 @@ class EDBOGuides extends Component
     */
     public function Login($User = NULL, $Password = NULL, $remembe = true) {
 
+        if (!$this->status)
+            return NULL;
+
         if (is_null($Password))
             $Password = \Yii::$app->user->identity->getEdbouser()->getEDBOPassword();
         
@@ -98,7 +89,7 @@ class EDBOGuides extends Component
         } 
 
         \Yii::trace(__METHOD__.' guid not found = '.$GUIDSession);
-        //\Yii::$app->session->set('sessionId','');
+        
         if (!$this->status) {
             \Yii::trace(__METHOD__.' guid not init - soap error !!! ');
             return NULL;
@@ -118,7 +109,7 @@ class EDBOGuides extends Component
             \Yii::trace(__METHOD__.' failed getting guid = '.$GUIDSession);
             return NULL;
         }
-        //\Yii::$app->session->set('sessionId','');
+        
         \Yii::$app->user->identity->setGUIDSession($res['res']);
 
         $GUIDSession = \Yii::$app->user->identity->getGUIDSession();
@@ -221,9 +212,9 @@ class EDBOGuides extends Component
         return NULL;
     }
 
-        /*
-     * Получения информации о системе
-     */
+    /*
+    * Получения информации о системе + выполняет роль контроля за состоянием подключения
+    */
     public function  GlobaliInfoGet($SessionGUID = NULL) {
         $res = $this->_GlobaliInfoGet($SessionGUID);
 
@@ -236,7 +227,7 @@ class EDBOGuides extends Component
         return $this->_GlobaliInfoGet($SessionGUID);
     }
 
-    public function  _GlobaliInfoGet($SessionGUID = NULL) {
+    private function  _GlobaliInfoGet($SessionGUID = NULL) {
 
         if (is_null($SessionGUID))
             if(!$SessionGUID = $this->Login()) return NULL;
@@ -244,9 +235,9 @@ class EDBOGuides extends Component
          $res = $this->soap->invoke ( "GlobaliInfoGet", array (
                 "SessionGUID" => $SessionGUID));
 
-        //return is_null($res['res']);//['dGloabalInfo'];
         if ($res['res'] && array_key_exists('dGloabalInfo', $res['res']))
             return $res['res']['dGloabalInfo'];
+
         return NULL;
     }
 
@@ -262,7 +253,7 @@ class EDBOGuides extends Component
             $ActualDate = EDBOSoapHelper::getDateNow();
 
         if (is_null($Id_Language))
-            $Id_Language = 1;
+            $Id_Language = 1; // default
 
         $res = $this->soap->invoke ( "KOATUUGetL1", array (
                 "SessionGUID" => $SessionGUID,
@@ -302,11 +293,80 @@ class EDBOGuides extends Component
             
             ));
 
-        return $res;
-        if ($res['res'] && array_key_exists('dKOATUU', $res['res']))
-            return $res['res']['dKOATUU'];
+        
+        if ($res['res'] && array_key_exists('dUniversities', $res['res']))
+            return $res['res']['dUniversities'];
         return NULL;
     }
 
+        /*
+     * Получения справочников типов учебных заведений
+     */
+    public function  EducationTypesGet($SessionGUID = NULL, $Id_Language = NULL) {
+
+         if (is_null($SessionGUID))
+            if(!$SessionGUID = $this->Login()) return NULL;
+
+        if (is_null($Id_Language))
+            $Id_Language = 1;
+
+
+      $res = $this->soap->invoke ( "EducationTypesGet", array (
+             "SessionGUID" => $SessionGUID,
+             "Id_Language" => $Id_Language
+              )
+              );
+
+        //return $res;
+
+        if ($res['res'] && array_key_exists('dEducationTypes', $res['res']))
+            return $res['res']['dEducationTypes'];
+        return NULL;
+    }
+
+        /*
+     * Получения справочников  типов  улиц.
+     */
+    public function  StreetTypesGet($SessionGUID = NULL, $Id_Language = NULL) {
+
+        if (is_null($SessionGUID))
+            if(!$SessionGUID = $this->Login()) return NULL;
+
+        if (is_null($Id_Language))
+            $Id_Language = 1;
+
+        $res = $this->soap->invoke ( "StreetTypesGet", array (
+             "SessionGUID" => $SessionGUID,
+             "Id_Language" => $Id_Language
+              )
+              );
+
+        //return $res;
+
+        if ($res['res'] && array_key_exists('dStreetTypes', $res['res']))
+            return $res['res']['dStreetTypes'];
+        return NULL;
+    }
+
+
+    /*
+     * Получения списка редакций специальностей
+     */
+    public function  SpecRedactionsGet($SessionGUID = NULL) {
+
+        if (is_null($SessionGUID))
+            if(!$SessionGUID = $this->Login()) return NULL;
+
+        $res = $this->soap->invoke ( "SpecRedactionsGet", array (
+             "SessionGUID" => $SessionGUID
+              )
+              );
+
+        //return $res;
+
+        if ($res['res'] && array_key_exists('dSpecRedactions', $res['res']))
+            return $res['res']['dSpecRedactions'];
+        return NULL;
+    }   
 
 }
