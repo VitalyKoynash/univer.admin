@@ -18,6 +18,7 @@ class DefaultController extends Controller
 
     public function actionEdboStatus()
     {
+        set_time_limit(5);
     	if (\Yii::$app->edbo->EDBOGuides->GlobaliInfoGet())
     		$res['status'] = true;
     	else

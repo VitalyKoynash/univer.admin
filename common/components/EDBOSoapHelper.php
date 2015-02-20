@@ -70,13 +70,16 @@ class EDBOSoapHelper extends Object
         
         if (!$this->statusSoap) return  $res;
 
-        if ($this->debug)
+        //if ($this->debug)
             \Yii::beginProfile($method);
         
         $message = '';
         try {
                         
             $invs = $this->soapClient->__soapCall ($method, array($params));
+
+            \Yii::endProfile($method);
+            
             $result_from_soap = $invs->{$method."Result"};
             $result = $this->buildObject($result_from_soap);
 
@@ -86,7 +89,9 @@ class EDBOSoapHelper extends Object
             $res['soap'] = $result_from_soap;
             
         } catch (\Exception $ex) {
-            
+            \Yii::endProfile($method);
+            if (is_array($params) && array_key_exists('Password', $params))
+                $params['Password'] = 'TOP SECRET 8)';
             $message = $ex->getMessage() .'\n'.print_r($params, true) ;
             
             \Yii::warning($message);
@@ -95,8 +100,8 @@ class EDBOSoapHelper extends Object
             $res['message'] = $message;
             $res['res'] = NULL;
         }
-        if ($this->debug)
-            \Yii::endProfile($method);
+        //if ($this->debug)
+            
         return $res;
     }
 

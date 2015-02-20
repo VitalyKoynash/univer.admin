@@ -62,3 +62,63 @@ $ config ['mode'] = Pdf :: MODE_UTF8;
 
 kartik-v grid пергружает страницу при переключении All/Pages
 добавить 'data-pjax'=>1 в функции renderToggleData() в строке 1166
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?php Pjax::begin([
+        'enableReplaceState'=>false,
+        'enablePushState'=>false,
+        'clientOptions'=>[
+            'container'=>'x1',
+        ]
+    ]); ?>
+
+ <?php $form = ActiveForm::begin(['id' => 'outstat',
+        'enableAjaxValidation' => false,
+        'options'=>[
+            'data-pjax'=>'#x1'
+        ],
+        'enableClientValidation' => true]); ?>
+<?php echo $form->field($model,'s_date')->widget(DateTimePicker::className(),[
+                'removeButton' => false,
+                'pickerButton' => ['icon' => 'time'],
+                'options' => [
+                    'readonly' => true,
+                ],
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'type' => 5,
+                    'minuteStep' => 30,
+                    'forceParse' => false,
+                    'format' => 'dd.mm.yyyy hh:ii',
+                    'language' => 'ru',
+                    'startView' => 1,
+                    'maxView' => 2,
+                    'endDate' => $model->max_date,
+                    'startDate' => $model->min_date
+                ]
+            ])->label('Дата начала периода');?>
+...
+ <?php   echo Html::submitButton();    ?>
+    <?php ActiveForm::end(); ?>
+<?php Pjax::end(); ?>
+
+<div id="x1"></div>

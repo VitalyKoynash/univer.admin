@@ -37,4 +37,18 @@ class DirectoryFromEdboController extends Controller
         
     }
 
+
+    public function actionSettings()
+    {
+        $request = Yii::$app->request;
+
+        if ($request->isAjax)
+            Yii::$app->getResponse()->format = yii\web\Response::FORMAT_JSON;
+        
+        $res['res'] = $this->renderPartial('settings');
+       
+        return $res;
+        
+    }
+
 }

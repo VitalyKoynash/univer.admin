@@ -47,30 +47,48 @@ class DirectoryFromEDBO extends Model
 
         $name_directory = $this->directory->name_directory;
 
-        if ($name_directory == 'KOATUUL1') {
+        return $this->loadFromEDBOByName($name_directory);
+    }
 
-            $this->getFromCache ('KOATUUL1', 'KOATUUGetL1');
-          
-        } elseif ($name_directory == 'Universities') {
+    private function loadFromEDBOByName($name_directory) {
+        $this->_result = NULL; 
+        try {
 
-            $this->getFromCache ('Universities', 'UniversitiesGet');
-            //$this->_result = \Yii::$app->edbo->EDBOGuides->UniversitiesGet();
-        } elseif ( $name_directory == 'GlobaliInfo') {
+            if ($name_directory == 'EDBOGuides.KOATUUL1') {
 
-            $this->getFromCache ('GlobaliInfo', 'GlobaliInfoGet');
-            //$this->_result = \Yii::$app->edbo->EDBOGuides->GlobaliInfoGet();
-        } elseif ( $name_directory == 'EducationTypes') {
+                $this->getFromCache ('KOATUUL1', 'KOATUUGetL1');
+              
+            } elseif ($name_directory == 'EDBOGuides.Universities') {
 
-            $this->getFromCache ('EducationTypes', 'EducationTypesGet');
-            //$this->_result = \Yii::$app->edbo->EDBOGuides->EducationTypesGet();
-        } elseif ( $name_directory == 'StreetTypes') {
+                $this->getFromCache ('Universities', 'UniversitiesGet');
+                
+            } elseif ( $name_directory == 'EDBOGuides.GlobaliInfo') {
 
-            $this->getFromCache ('StreetTypes', 'StreetTypesGet');
-            //$this->_result = \Yii::$app->edbo->EDBOGuides->StreetTypesGet();
-        } elseif ( $name_directory == 'SpecRedactions') {
+                $this->getFromCache ('GlobaliInfo', 'GlobaliInfoGet');
+                
+            } elseif ( $name_directory == 'EDBOGuides.EducationTypes') {
 
-            $this->getFromCache ('SpecRedactions', 'SpecRedactionsGet');
-            //$this->_result = \Yii::$app->edbo->EDBOGuides->SpecRedactionsGet();
+                $this->getFromCache ('EducationTypes', 'EducationTypesGet');
+                
+            } elseif ( $name_directory == 'EDBOGuides.StreetTypes') {
+
+                $this->getFromCache ('StreetTypes', 'StreetTypesGet');
+                
+            } elseif ( $name_directory == 'EDBOGuides.SpecRedactions') {
+
+                $this->getFromCache ('SpecRedactions', 'SpecRedactionsGet');
+                
+            } elseif ( $name_directory == 'EDBOGuides.Spec') {
+
+                $this->getFromCache ('Spec', 'SpecGet');
+
+            } elseif ( $name_directory == 'EDBOGuides.Subjects') {
+
+                $this->getFromCache ('Subjects', 'SubjectsGet');
+
+            }
+        } catch ( yii\base\UnknownMethodException $ex) {
+            \Yii::trace("$name_directory not implement");
         }
         return $this->_result;
     }
@@ -78,7 +96,8 @@ class DirectoryFromEDBO extends Model
     private function getFromCache ($name, $funcName, $expired = 3600, $useCache = true) {
         $cache = \Yii::$app->cache;
         $data = $cache->get($name);
-        if ( $useCache && ($data === false) && empty(trim($data))) {
+        \Yii::trace('type cache for ' . $name . ' = ' . gettype($data));
+        if ( !$useCache ||   is_null($data ) || is_bool($data )) {
             $this->_result = \Yii::$app->edbo->EDBOGuides->{$funcName}();
             $cache->set($name, $this->_result, $expired);
             //\Yii::trace('Use cache for ' . $name);
@@ -102,7 +121,7 @@ class DirectoryFromEDBO extends Model
 
     private function initProvider() {
        
-        if (is_null($this->_result))
+        if (is_null($this->_result) || !is_array($this->_result))
            return NULL;
 
         if (!is_null($this->_array_provider))

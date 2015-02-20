@@ -68,12 +68,14 @@ class EDBOGuides extends Component
 В случае ошибки,  метод возвращает строку с кодом и описанием ошибки. 
 Ошибочным считается вызов метода,  который возвращает строку  длинной  не равной  36-и
 байтам. 
+
+    по умолчанию параметры берем из базы
     */
     public function Login($User = NULL, $Password = NULL, $remembe = true) {
-
+        // проверка статуса соап
         if (!$this->status)
             return NULL;
-
+        // запрос пароля 
         if (is_null($Password))
             $Password = \Yii::$app->user->identity->getEdbouser()->getEDBOPassword();
         
@@ -128,6 +130,19 @@ class EDBOGuides extends Component
         }*/
     }
 
+    static private function getResult ($res, $param = NULL) {
+        
+        if (is_null($res) || !is_array($res))
+            return NULL;
+
+        if (is_null($param))
+            return $res['res'];
+
+        if ($res['res'] && array_key_exists($param, $res['res']))
+            return $res['res'][$param];
+
+        return NULL;
+    }
 
     public function Logout ($SessionGUID = NULL) {
         if (is_null($SessionGUID))
@@ -154,32 +169,34 @@ class EDBOGuides extends Component
             
         }
 
-        //return;
+        if (is_null($this->soap))
+            return NULL;
         
         $res = $this->soap->invoke ( "Logout", array (
                 "SessionGUID" => $SessionGUID));
-            
-        if (strlen($res['res']) == 0)
+        
+        $data = $this->getResult($res);
+        if (!is_null($data) && is_string($data) && strlen($data) == 0)
             return TRUE;
 
-        return $res['res'];
+        return $data;
     }
     
     /*
      * Получения списка доступных языков используемых ЄДЕБО
      */
     public function LanguagesGet($SessionGUID = NULL) {
-        return;
+        
         if (is_null($SessionGUID))
             if(!$SessionGUID = $this->Login()) return NULL;
 
          $res = $this->soap->invoke ( "LanguagesGet", array (
                 "SessionGUID" => $SessionGUID));
         
-        return $res;
-
-        if (isset($res['res']) && isset( $res['res']['dLanguages']))
-            return $res['res']['dLanguages'];
+        //return $res;
+        return $this->getResult($res, 'dLanguages');
+        //if (isset($res['res']) && isset( $res['res']['dLanguages']))
+            //return $res['res']['dLanguages'];
 
 
         return NULL;
@@ -189,27 +206,18 @@ class EDBOGuides extends Component
     * Получение информации об ошибке при неудачном вызове всех методов web  сервиса, кроме  Login и Logout.
     */
     public function GetLastError($SessionGUID = NULL) {
-        return;
+        //return;
         if (is_null($SessionGUID))
             if(!$SessionGUID = $this->Login()) return NULL;
 
         $res = $this->soap->invoke ( "GetLastError", array (
                 "GUIDSession" => $SessionGUID));
-        /*
-        if ($res == NULL) {
-            //error getting error
-            $res = $this->soap->invoke ( "GetLastError", array (
-                "SessionGUID" => $GUIDSession));
-            if ($res == NULL) {
-                return "Unknow EDBO error";
-            }
 
-        }
-        */
-        return $res;
-        if (isset($res['res']) && isset( $res['res']['dLastError']))
+        return $this->getResult($res, 'dLastError');
+
+        /*if (isset($res['res']) && isset( $res['res']['dLastError']))
             return $res['res']['dLastError'];
-        return NULL;
+        return NULL;*/
     }
 
     /*
@@ -235,10 +243,11 @@ class EDBOGuides extends Component
          $res = $this->soap->invoke ( "GlobaliInfoGet", array (
                 "SessionGUID" => $SessionGUID));
 
-        if ($res['res'] && array_key_exists('dGloabalInfo', $res['res']))
-            return $res['res']['dGloabalInfo'];
+        return $this->getResult($res, 'dGloabalInfo');
+        //if ($res['res'] && array_key_exists('dGloabalInfo', $res['res']))
+        //    return $res['res']['dGloabalInfo'];
 
-        return NULL;
+        //return NULL;
     }
 
 
@@ -261,10 +270,11 @@ class EDBOGuides extends Component
                 "Id_Language" => $Id_Language      
                  )
                  );
-
-        if ($res['res'] && array_key_exists('dKOATUU', $res['res']))
+        return $this->getResult($res, 'dKOATUU');
+        
+        /*if ($res['res'] && array_key_exists('dKOATUU', $res['res']))
             return $res['res']['dKOATUU'];
-        return NULL;
+        return NULL;*/
     }
 
 
@@ -293,10 +303,11 @@ class EDBOGuides extends Component
             
             ));
 
-        
-        if ($res['res'] && array_key_exists('dUniversities', $res['res']))
+        return $this->getResult($res, 'dUniversities');
+
+        /*if ($res['res'] && array_key_exists('dUniversities', $res['res']))
             return $res['res']['dUniversities'];
-        return NULL;
+        return NULL;*/
     }
 
         /*
@@ -318,10 +329,11 @@ class EDBOGuides extends Component
               );
 
         //return $res;
+        return $this->getResult($res, 'dEducationTypes');
 
-        if ($res['res'] && array_key_exists('dEducationTypes', $res['res']))
+        /*if ($res['res'] && array_key_exists('dEducationTypes', $res['res']))
             return $res['res']['dEducationTypes'];
-        return NULL;
+        return NULL;*/
     }
 
         /*
@@ -342,10 +354,11 @@ class EDBOGuides extends Component
               );
 
         //return $res;
+        return $this->getResult($res, 'dStreetTypes');
 
-        if ($res['res'] && array_key_exists('dStreetTypes', $res['res']))
+        /*if ($res['res'] && array_key_exists('dStreetTypes', $res['res']))
             return $res['res']['dStreetTypes'];
-        return NULL;
+        return NULL;*/
     }
 
 
@@ -363,10 +376,71 @@ class EDBOGuides extends Component
               );
 
         //return $res;
+        return $this->getResult($res, 'dSpecRedactions');
 
-        if ($res['res'] && array_key_exists('dSpecRedactions', $res['res']))
+        /*if ($res['res'] && array_key_exists('dSpecRedactions', $res['res']))
             return $res['res']['dSpecRedactions'];
-        return NULL;
+        return NULL;*/
     }   
+
+
+    /*
+    * Получения справочников  специальностей указанной редакции
+    */
+    public function  SpecGet($SessionGUID = NULL, $SpecRedactionCode = '09.12.2010',  $SpecIndastryCode = '',  
+            $SpecDirectionsCode = '',  $SpecSpecialityCode = '',  $SpecCode = '',  
+            $SpecScecializationCode = '', $Id_Language = 1, $ActualDate = NULL,  $SpecClasifierCode = '') {
+
+        if (is_null($SessionGUID))
+            if(!$SessionGUID = $this->Login()) return NULL;
+
+        if (is_null($Id_Language))
+            $Id_Language = 1;
+
+        if (is_null($ActualDate))
+            $ActualDate = EDBOSoapHelper::getDateNow();
+
+        $res = $this->soap->invoke ( "SpecGet", array (
+            "SessionGUID" => $SessionGUID,
+            "SpecRedactionCode" => $SpecRedactionCode,  
+            "SpecIndastryCode" => $SpecIndastryCode,  
+            "SpecDirectionsCode" => $SpecDirectionsCode,  
+            "SpecSpecialityCode" => $SpecSpecialityCode,  
+            "SpecCode" => $SpecCode,  
+            "SpecScecializationCode" => $SpecScecializationCode, 
+            "Id_Language" => $Id_Language, 
+            "ActualDate" => $ActualDate,  
+            "SpecClasifierCode" => $SpecClasifierCode
+        ));
+
+        return $this->getResult($res, 'dSpec');
+        //return $res;
+    }
+
+        /*
+     * Получения  справочников  школьных  предметов.
+     */
+    public function  SubjectsGet($SessionGUID = NULL, $Id_Language = NULL, $ActualDate = NULL) {
+        
+        if (is_null($SessionGUID))
+            if(!$SessionGUID = $this->Login()) return NULL;
+
+        if (is_null($Id_Language))
+            $Id_Language = 1;
+
+        if (is_null($ActualDate))
+            $ActualDate = EDBOSoapHelper::getDateNow();
+        
+        $res = $this->soap->invoke ( "SubjectsGet", array (
+            "SessionGUID" => $SessionGUID,
+            "Id_Language" => $Id_Language, 
+            "ActualDate" => $ActualDate,  
+            ));
+
+
+
+        return $this->getResult($res, 'dSubjects');
+        //return $res;
+    }
 
 }

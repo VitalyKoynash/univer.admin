@@ -7,7 +7,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 class EDBOStatusWidget extends Widget{
-	public $interval_check = 30000;
+	public $interval_check = 60000;
 	public $label = 'EDBO';
 	
 	public function init(){
@@ -15,11 +15,12 @@ class EDBOStatusWidget extends Widget{
 	}
 
 	public function run(){
+		//return "<div  id=\"EDBO_status\" style=\"color:RGB(200,200,200);\" class=\"navbar-inverse navbar-brand\">----</div>";
 		$guid = uniqid();
 		$url = Url::toRoute(['/EDBOadmin/default/edbo-status']);
 		$data = 
 		"
-		 	<div  id=\"EDBO_status\" style=\"color:RGB(200,0,0);\" class=\"navbar-inverse navbar-brand\">
+		 	<div  id=\"EDBO_status\" style=\"color:RGB(150,150,150);\" class=\"navbar-inverse navbar-brand\">
                 $this->label
             </div>
 		";	
@@ -32,14 +33,14 @@ var _f_ = function () {
 	 	url: '$url',
 	  	cache: false,
 	  	async: true,
-	  	timeout: 15000,
+	  	timeout: 16000,
 	  	dataType: 'json',
 	  	success: function(res){
 	  		//console.log(res);
 	  		if (res['status']) {
 	    		$(\"#EDBO_status\").css('color', 'rgb(0,200,0)');
 	  		} else {
-				$(\"#EDBO_status\").css('color', 'rgb(0,200,0)');
+				$(\"#EDBO_status\").css('color', 'rgb(200,0,0)');
 	  		}
 	  	},
 	  	errrep:true,//отображение ошибок error если true
@@ -69,7 +70,7 @@ var _f_ = function () {
 };
 setTimeout(
 	_f_
-	, 500);
+	, 1000);
 
 setInterval(
 	_f_
